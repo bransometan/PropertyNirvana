@@ -51,7 +51,8 @@
                       Please enter a valid email (e.g. shashank@gmail.com)
                     </div>
                     <div id="emailHelp" class="form-text">
-                      We'll never share your email with anyone else.
+                      Note: Only registered accounts will receive password reset
+                      emails
                     </div>
                   </div>
 
@@ -85,6 +86,9 @@
       
   <script>
 import logoURL from "../assets/logo.png";
+import { ref } from "vue";
+import store from "../store.js";
+
 export default {
   components: {
     logoURL,
@@ -104,7 +108,23 @@ export default {
       if (form.checkValidity()) {
         // Perform any additional form submission logic here
         // For example, you can send the form data to a server
-        console.log(123);
+        const email = ref("");
+        const error = ref(null);
+
+        const ForgetPassword = async () => {
+          try {
+            await store.dispatch("forgetPassword", {
+              email: exampleInputEmail1.value,
+            });
+          } catch (err) {
+            error.value = err.message;
+            alert(err);
+          }
+        };
+
+        ForgetPassword();
+
+        return { ForgetPassword, email, error };
       }
 
       form.classList.add("was-validated");

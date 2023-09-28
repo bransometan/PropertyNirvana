@@ -37,7 +37,7 @@
                   class="needs-validation"
                   @submit="submitForm"
                   novalidate
-                  oninput='confirmPassword.setCustomValidity(confirmPassword.value != password.value ? "Password do not match." : "")'
+                  oninput='password.setCustomValidity(password.value.length < 7 ? "Length of Password must be greater than 7." : "");confirmPassword.setCustomValidity(confirmPassword.value != password.value ? "Password do not match." : ""); '
                 >
                   <div class="mb-3">
                     <div class="row">
@@ -49,6 +49,7 @@
                           type="text"
                           class="form-control"
                           id="exampleInputFirstName1"
+                          name="firstName"
                           placeholder="First name"
                           required
                         />
@@ -66,6 +67,7 @@
                           type="text"
                           class="form-control"
                           id="exampleInputLastName1"
+                          name="lastName"
                           placeholder="Last name"
                           required
                         />
@@ -85,6 +87,7 @@
                       type="email"
                       class="form-control"
                       id="exampleInputEmail1"
+                      name="email"
                       aria-describedby="emailHelp"
                       placeholder="Email"
                       required
@@ -110,12 +113,23 @@
                       name="password"
                       placeholder="Password"
                       v-model="password"
-                      @input="checkPasswordMatch"
+                      @input="checkPasswordLength"
                       required
                     />
-                    <div class="valid-feedback">Looks Good!</div>
-                    <div class="invalid-feedback">
-                      Please fill out your password
+                    <div class="invalid-feedback" v-if="!password">
+                      Please fill out your Password.
+                    </div>
+                    <div
+                      class="invalid-feedback"
+                      v-else-if="!passwordLength && password"
+                    >
+                      Length of Password must be greater than 6
+                    </div>
+                    <div
+                      class="valid-feedback"
+                      v-else="passwordLength && password"
+                    >
+                      Looks Good!
                     </div>
                   </div>
 
@@ -178,8 +192,12 @@
   </main>
 </template>
         
-    <script>
+<script>
 import logoURL from "../assets/logo.png";
+import { ref } from "vue";
+import router from "../router";
+import store from "../store.js";
+
 export default {
   components: {
     logoURL,
@@ -190,11 +208,15 @@ export default {
       password: "",
       confirmPassword: "",
       passwordsMatch: false,
+      passwordLength: false,
     };
   },
   computed: {
     checkPasswordMatch() {
       this.passwordsMatch = this.password === this.confirmPassword;
+    },
+    checkPasswordLength() {
+      this.passwordLength = this.password.length >= 7;
     },
   },
   methods: {
@@ -203,12 +225,33 @@ export default {
       event.stopPropagation();
 
       const form = event.target;
-      console.log(form.checkValidity());
-      console.log(3221);
-      if (form.checkValidity() && this.passwordsMatch) {
+      if (form.checkValidity() && this.passwordsMatch && this.passwordLength) {
         // Perform any additional form submission logic here
         // For example, you can send the form data to a server
-        console.log(123);
+        const firstName = ref("");
+        const lastName = ref("");
+        const email = ref("");
+        const password = ref("");
+        const error = ref(null);
+
+        const Register = async () => {
+          try {
+            await store.dispatch("register", {
+              firstName: exampleInputFirstName1.value,
+              lastName: exampleInputLastName1.value,
+              email: exampleInputEmail1.value,
+              password: exampleInputPassword1.value,
+            });
+            alert("Congratulations, your account is created!");
+          } catch (err) {
+            error.value = err.message;
+            alert(err);
+          }
+        };
+
+        Register();
+
+        return { Register, firstName, lastName, email, password, error };
       }
 
       form.classList.add("was-validated");

@@ -5,22 +5,16 @@ export default {
     Sidebar,
   },
   data() {
-    return {
-      toggle: true,
-    };
+    return {};
   },
-  methods: {
-    TriggerLogout(x) {
-      this.toggle = x;
-    },
-  },
+  methods: {},
 };
 </script>
 
 <template>
   <div class="app">
     <!-- Start::Sidebar -->
-    <Sidebar v-show="toggle" @logout="TriggerLogout($event)" />
+    <Sidebar v-if="!$route.meta.hideNavbar" />
 
     <!-- End::Sidebar -->
 

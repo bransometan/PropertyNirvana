@@ -41,7 +41,7 @@
     <div class="flex"></div>
 
     <div class="menu">
-      <router-link to="/Login" class="button" @click="onLogout">
+      <router-link to="/Login" class="button" @click.prevent="onLogout">
         <span class="material-icons">logout</span>
         <span class="text">Logout</span>
       </router-link>
@@ -52,6 +52,8 @@
 <script>
 import { ref } from "vue";
 import logoURL from "../assets/logo_only_removebg.png";
+import store from "../store.js";
+import router from "../router";
 
 export default {
   components: {
@@ -64,14 +66,14 @@ export default {
       is_expanded: localStorage.getItem("is_expanded") === "true",
     };
   },
-  emits: ["logout"],
   methods: {
     ToggleMenu() {
       this.is_expanded = !this.is_expanded;
       localStorage.setItem("is_expanded", this.is_expanded);
     },
-    onLogout() {
-      this.$emit("logout", false);
+    async onLogout() {
+      await store.dispatch("logOut");
+      router.push("/login");
     },
   },
 };

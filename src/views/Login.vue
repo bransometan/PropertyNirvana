@@ -110,6 +110,9 @@
 
 <script>
 import logoURL from "../assets/logo.png";
+import { ref } from "vue";
+import router from "../router";
+import store from "../store.js";
 
 export default {
   components: {
@@ -130,7 +133,26 @@ export default {
       if (form.checkValidity()) {
         // Perform any additional form submission logic here
         // For example, you can send the form data to a server
-        console.log(123);
+        const email = ref("");
+        const password = ref("");
+        const error = ref(null);
+
+        const Login = async () => {
+          try {
+            await store.dispatch("logIn", {
+              email: exampleInputEmail1.value,
+              password: exampleInputPassword1.value,
+            });
+            router.push("/");
+          } catch (err) {
+            error.value = err.message;
+            alert(err);
+          }
+        };
+
+        Login();
+
+        return { Login, email, password, error };
       }
 
       form.classList.add("was-validated");
