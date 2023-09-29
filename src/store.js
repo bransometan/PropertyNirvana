@@ -8,6 +8,7 @@ import {
   sendPasswordResetEmail,
   sendEmailVerification,
 } from "firebase/auth";
+import Swal from "sweetalert2";
 
 // Vuex is a state management library that provides a centralized store to help manage the components in your Vue application.
 
@@ -54,7 +55,14 @@ const store = createStore({
           let msg =
             "An email verification link has been sent to " +
             response.user.email;
-          alert(msg);
+          Swal.fire({
+            icon: "success",
+            title: "Congratulations!",
+            text: "Your account has been created! " + msg,
+            confirmButtonColor: "#0d6efd",
+          });
+
+          //alert(msg);
         });
       } else {
         throw new Error("Unable to register user");
@@ -70,25 +78,49 @@ const store = createStore({
           let msg = "You have not verified your email: " + user.email;
           throw new Error(msg);
         } else {
+          Swal.fire({
+            icon: "success",
+            title: "Login Successful!",
+            text: "Welcome to PropertyNirvana!",
+            confirmButtonColor: "#0d6efd",
+          });
           context.commit("SET_USER", response.user);
         }
       } else {
-        throw new Error("login failed");
+        throw new Error("Login failed");
       }
     },
 
     async logOut(context) {
       await signOut(auth);
+      Swal.fire({
+        icon: "success",
+        title: "Logout Successful!",
+        text: "Thanks for using PropertyNirvana!",
+        confirmButtonColor: "#0d6efd",
+      });
       context.commit("SET_USER", null);
     },
 
     async forgetPassword(context, { email }) {
       sendPasswordResetEmail(auth, email)
         .then(() => {
-          alert("Password reset email sent!");
+          //alert("Password reset email sent!");
+          Swal.fire({
+            icon: "success",
+            title: "Congratulations!",
+            text: "Password reset email was sent to: " + email,
+            confirmButtonColor: "#0d6efd",
+          });
         })
         .catch((error) => {
-          alert(error);
+          //alert(error);
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: error,
+            confirmButtonColor: "#0d6efd",
+          });
         });
     },
 

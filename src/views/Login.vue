@@ -33,7 +33,12 @@
                 <div class="text-center">
                   <img :src="logoURL" alt="PropertyNirvana Logo" width="300" />
                 </div>
-                <form class="needs-validation" @submit="submitForm" novalidate>
+                <form
+                  ref="LoginForm"
+                  class="needs-validation"
+                  @submit="submitForm"
+                  novalidate
+                >
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label"
                       >Email address</label
@@ -129,34 +134,34 @@ export default {
       event.stopPropagation();
 
       const form = event.target;
-
       if (form.checkValidity()) {
         // Perform any additional form submission logic here
         // For example, you can send the form data to a server
-        const email = ref("");
-        const password = ref("");
-        const error = ref(null);
-
-        const Login = async () => {
-          try {
-            await store.dispatch("logIn", {
-              email: exampleInputEmail1.value,
-              password: exampleInputPassword1.value,
-            });
-            router.push("/");
-          } catch (err) {
-            error.value = err.message;
-            alert(err);
-          }
-        };
-
-        Login();
-
-        return { Login, email, password, error };
+        this.Login();
       }
 
       form.classList.add("was-validated");
     },
+    async Login() {
+      try {
+        await store.dispatch("logIn", {
+          email: exampleInputEmail1.value,
+          password: exampleInputPassword1.value,
+        });
+        router.push("/");
+      } catch (err) {
+        //alert(err);
+        this.$swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+          confirmButtonColor: "#0d6efd",
+        });
+      }
+    },
+  },
+  mounted() {
+    this.$refs.LoginForm.reset();
   },
 };
 </script>

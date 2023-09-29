@@ -33,7 +33,12 @@
                 <div class="text-center">
                   <img :src="logoURL" alt="PropertyNirvana Logo" width="300" />
                 </div>
-                <form class="needs-validation" @submit="submitForm" novalidate>
+                <form
+                  ref="ForgetPasswordForm"
+                  class="needs-validation"
+                  @submit="submitForm"
+                  novalidate
+                >
                   <div class="mb-3">
                     <label for="exampleInputEmail1" class="form-label"
                       >Email address</label
@@ -104,31 +109,32 @@ export default {
       event.stopPropagation();
 
       const form = event.target;
-
       if (form.checkValidity()) {
         // Perform any additional form submission logic here
         // For example, you can send the form data to a server
-        const email = ref("");
-        const error = ref(null);
-
-        const ForgetPassword = async () => {
-          try {
-            await store.dispatch("forgetPassword", {
-              email: exampleInputEmail1.value,
-            });
-          } catch (err) {
-            error.value = err.message;
-            alert(err);
-          }
-        };
-
-        ForgetPassword();
-
-        return { ForgetPassword, email, error };
+        this.ForgetPassword();
       }
 
       form.classList.add("was-validated");
     },
+    async ForgetPassword() {
+      try {
+        await store.dispatch("forgetPassword", {
+          email: exampleInputEmail1.value,
+        });
+      } catch (err) {
+        this.$swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+          confirmButtonColor: "#0d6efd",
+        });
+        //alert(err);
+      }
+    },
+  },
+  mounted() {
+    this.$refs.ForgetPasswordForm.reset();
   },
 };
 </script>

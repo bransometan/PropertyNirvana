@@ -34,6 +34,7 @@
                   <img :src="logoURL" alt="PropertyNirvana Logo" width="300" />
                 </div>
                 <form
+                  ref="RegisterForm"
                   class="needs-validation"
                   @submit="submitForm"
                   novalidate
@@ -228,34 +229,33 @@ export default {
       if (form.checkValidity() && this.passwordsMatch && this.passwordLength) {
         // Perform any additional form submission logic here
         // For example, you can send the form data to a server
-        const firstName = ref("");
-        const lastName = ref("");
-        const email = ref("");
-        const password = ref("");
-        const error = ref(null);
-
-        const Register = async () => {
-          try {
-            await store.dispatch("register", {
-              firstName: exampleInputFirstName1.value,
-              lastName: exampleInputLastName1.value,
-              email: exampleInputEmail1.value,
-              password: exampleInputPassword1.value,
-            });
-            alert("Congratulations, your account is created!");
-          } catch (err) {
-            error.value = err.message;
-            alert(err);
-          }
-        };
-
-        Register();
-
-        return { Register, firstName, lastName, email, password, error };
+        this.Register();
       }
 
       form.classList.add("was-validated");
     },
+    async Register() {
+      try {
+        await store.dispatch("register", {
+          firstName: exampleInputFirstName1.value,
+          lastName: exampleInputLastName1.value,
+          email: exampleInputEmail1.value,
+          password: exampleInputPassword1.value,
+        });
+        //alert("Congratulations, your account is created!");
+      } catch (err) {
+        //alert(err);
+        this.$swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: err,
+          confirmButtonColor: "#0d6efd",
+        });
+      }
+    },
+  },
+  mounted() {
+    this.$refs.RegisterForm.reset();
   },
 };
 </script>
