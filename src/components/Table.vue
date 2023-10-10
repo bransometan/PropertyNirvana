@@ -14,7 +14,7 @@
   <table id="tableComponent" class="table table-bordered table-striped">
     <thead>
       <tr>
-        <!-- loop through each value of the fields to get the table header -->
+        <!-- loop through each value of the fields to get the table header hello-->
         <th v-for="field in fields" :key="field" @click="sortTable(field)">
           {{ field }}
           <span class="material-symbols-outlined icon-align"> swap_vert </span>
